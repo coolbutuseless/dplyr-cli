@@ -1,0 +1,6 @@
+.Rhistory
+.Rproj.user
+*.Rproj
+.DS_Store
+*.swp
+mtcars.csv

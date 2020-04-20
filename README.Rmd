@@ -1,0 +1,149 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+# dplyr-cli
+
+<!-- badges: start -->
+![](https://img.shields.io/badge/cool-useless-green.svg)
+<!-- badges: end -->
+
+`dplyr-cli` uses [{littler}](https://cran.r-project.org/package=littler) to 
+run dplyr commands on CSV files in the terminal.
+
+`dplyr-cli` makes use of the terminal pipe `|` instead of the magrittr pipe (`%>%`)
+to run sequences of commands.
+
+```
+cat mtcars.csv | group_by cyl | summarise "mpg = mean(mpg)" | kable
+#> | cyl|      mpg|
+#> |---:|--------:|
+#> |   4| 26.66364|
+#> |   6| 19.74286|
+#> |   8| 15.10000|
+```
+
+## Motivation
+
+I wanted to be able to do quick hacks on CSV files on the command line without
+actually starting a proper R session.
+
+
+## What dplyr commands are supported?
+
+Any command of the form `dplyr::verb(.data, code)`
+
+Currently two extra commands are supported which are not part of `dplyr`.
+
+* `csv` performs no dplyr command, but only outputs the input data as CSV to stdout
+* `kable` performs no dplyr command, but only outputs the input data as a
+  `knitr::kable()` formatted string to stdout
+
+
+## Limitations
+
+* When using special shell characters such as `()`, you'll have to quote 
+  your code arguments
+* Every command runs in a separate R session - startup overhead can get 
+  prohibitive.
+
+## Usage
+
+```{sh}
+./dplyr.sh --help
+```
+
+
+
+## Installation
+
+`dplyr-cli` is run from the shell but at every invocation is starting a new 
+rsession where the following packages are expected to be installed:
+
+
+```{r eval=FALSE}
+install.packages('littler')  # Scripting front-end for R
+install.packages('glue')     # text manipulation
+install.packages('dplyr')    # data manipulation
+install.packages('docopt')   # CLI description language
+```
+
+You'll then need to download the shell script from my github and put `dplyr.sh`
+somewhere in your path.
+
+```
+git clone https://github.com/coolbutuseless/dplyr-cli
+```
+
+
+# Example data
+
+```{r}
+write.csv(mtcars, "mtcars.csv", row.names = FALSE)
+```
+
+# Example 1 - Basic Usage
+
+```{sh}
+# cat contents of input CSV into dplyr-cli.  
+# Use '-c' to output CSV if this is the final step
+cat mtcars.csv | ./dplyr.sh filter -c mpg == 21
+
+# Put quotes around any commands which contain special characters like <>()
+cat mtcars.csv | ./dplyr.sh filter -c "mpg < 11"
+
+# Combine dplyr commands with shell 'head' command
+./dplyr.sh select --file mtcars.csv -c cyl | head -n 6
+```
+
+
+# Example 2 - Simple piping of commands (with shell pipe, not magrittr pipe)
+
+```{sh}
+cat mtcars.csv | \
+   ./dplyr.sh mutate "cyl2 = 2 * cyl"  | \
+   ./dplyr.sh filter "cyl == 8" | \
+   ./dplyr.sh kable
+```
+
+
+# Example 3 - set up some aliases for convenience
+
+
+```{sh}
+alias mutate="./dplyr.sh mutate"
+alias filter="./dplyr.sh filter"
+alias select="./dplyr.sh select"
+alias summarise="./dplyr.sh summarise"
+alias group_by="./dplyr.sh group_by"
+alias ungroup="./dplyr.sh ungroup"
+alias count="./dplyr.sh count"
+alias arrange="./dplyr.sh arrange"
+alias kable="./dplyr.sh kable"
+
+
+cat mtcars.csv | group_by cyl | summarise "mpg = mean(mpg)" | kable
+```
+
+
+## Security warning
+
+`dplyr-cli` uses `eval(parse(text = ...))` on user input.  Do not expose this 
+program to the internet or random users under any circumstances.
+
+
+## Inspirations
+
+* [xsv](https://github.com/BurntSushi/xsv) - a fast CSV command line toolkit 
+  written in Rust
+* [jq](https://stedolan.github.io/jq/) - a command line JSON processor.
