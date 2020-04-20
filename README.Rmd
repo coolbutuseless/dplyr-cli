@@ -98,10 +98,16 @@ write.csv(mtcars, "mtcars.csv", row.names = FALSE)
 # cat contents of input CSV into dplyr-cli.  
 # Use '-c' to output CSV if this is the final step
 cat mtcars.csv | ./dplyr.sh filter -c mpg == 21
+```
 
+
+```{sh}
 # Put quotes around any commands which contain special characters like <>()
 cat mtcars.csv | ./dplyr.sh filter -c "mpg < 11"
+```
 
+
+```{sh}
 # Combine dplyr commands with shell 'head' command
 ./dplyr.sh select --file mtcars.csv -c cyl | head -n 6
 ```
