@@ -74,6 +74,15 @@ install.packages('dplyr')    # data manipulation
 install.packages('docopt')   # CLI description language
 ```
 
+To do it from the cli, install `r-base` (`sudo apt -y install r-base`) and then run
+
+```bash
+sudo su - -c "R -e \"install.packages('littler', repos='http://cran.rstudio.com/')\""
+sudo su - -c "R -e \"install.packages('glue', repos='http://cran.rstudio.com/')\""
+sudo su - -c "R -e \"install.packages('dplyr', repos='http://cran.rstudio.com/')\""
+sudo su - -c "R -e \"install.packages('docopt', repos='http://cran.rstudio.com/')\""
+```
+
 You’ll then need to download the shell script from my github and put
 `dplyr.sh` somewhere in your path.
 
