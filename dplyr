@@ -14,6 +14,7 @@
 #   v0.1.0  2020-04-20 Initial release
 #   v0.1.1  2020-04-21 Switch to Rscript executable
 #   v0.1.2  2020-04-21 Support for joins
+#   v0.1.3  2020-04-22 More robust tmpdir handling
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 suppressMessages({
@@ -58,6 +59,18 @@ read_data <- function(input) {
         rds = readRDS(input),
         stop("Unknown file extension: ", ext)
     )
+}
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Helper function
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"%||%" <- function(x, y) {
+    if (is.null(x)) {
+      y
+    } else {
+      x
+    }
 }
 
 
@@ -126,9 +139,16 @@ if (opt$command == 'kable') {
     if (opt$verbose) message(">>>> output CSV to stdout")
     write.csv(res, row.names = FALSE)
 } else {
-    # Explicitly setting a known tempdir. Otherwise 'tempdir()'
-    # directory is destroyed at end of each session
-    tmp <- tempfile(tmpdir = Sys.getenv('TMPDIR'), fileext = ".rds")
+    # Explicitly set a known, unchanging tempdir.
+    # A temporary directory created via 'tempdir()' is valid only for the
+    # current rsession and is destroyed at the session's close.
+    # This does not work for the multiple rsessions being
+    # used with the shell pipe.  So try and determine as best I can
+    # where the best temporary directory is.
+    tmpdir <- c(Sys.getenv(c('TMPDIR', 'TMP', 'TEMP')), "/tmp/")
+    tmpdir <- tmpdir[tmpdir != '']
+    tmpdir <- tmpdir[1]
+    tmp <- tempfile(tmpdir = tmpdir, fileext = ".rds")
     saveRDS(res, tmp)
     if (opt$verbose) message(">>>> output to RDS", tmp)
     cat(tmp, "\n")

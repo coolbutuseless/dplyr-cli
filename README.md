@@ -85,6 +85,10 @@ dplyr --help
 
   - Support for joins e.g. `left_join`
 
+#### v0.1.3 2020-04-22
+
+  - More robust tmpdir handling
+
 ## Installation
 
 Because this script straddles a great divide between R and the shell,
