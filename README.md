@@ -41,6 +41,7 @@ Currently two extra commands are supported which are not part of
 ## Limitations
 
   - Only tested under ‘bash’ on OSX. YMMV.
+  - For `zsh` it appears you should escape much more, including `=`
   - When using special shell characters such as `()`, you’ll have to
     quote your code arguments.  
   - Every command runs in a separate R session - startup overhead can
@@ -78,6 +79,7 @@ you need to ensure both are set up correctly for this to work.
 new rsession where the following packages are expected to be installed:
 
 ``` r
+install.packages('readr')    # read in CSV data
 install.packages('dplyr')    # data manipulation
 install.packages('docopt')   # CLI description language
 ```
@@ -103,7 +105,7 @@ write.csv(mtcars, "mtcars.csv", row.names = FALSE)
 ``` sh
 # cat contents of input CSV into dplyr-cli.  
 # Use '-c' to output CSV if this is the final step
-cat mtcars.csv | dplyr filter -c mpg == 21
+cat mtcars.csv | dplyr filter -c "mpg == 21"
 ```
 
     #  "mpg","cyl","disp","hp","drat","wt","qsec","vs","am","gear","carb"
