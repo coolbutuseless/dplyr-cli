@@ -28,7 +28,10 @@ without actually starting a proper R session.
 
 ## What dplyr commands are supported?
 
-Any command of the form `dplyr::verb(.data, code)`
+Any command of the form:
+
+  - `dplyr::verb(.data, code)`
+  - `dplyr::*_join(.data, .rhs)`
 
 Currently two extra commands are supported which are not part of
 `dplyr`.
@@ -46,6 +49,8 @@ Currently two extra commands are supported which are not part of
     quote your code arguments.  
   - Every command runs in a separate R session - startup overhead can
     get prohibitive.
+  - “joins” (such as `left_join`) do not currently let you specify the
+    `by` argument, so there must be columns in common to both dataset
 
 ## Usage
 
@@ -64,6 +69,21 @@ dplyr --help
     #      -f FILE --file=FILE  input CSV or RDS filename. If reading from stdin, assumes CSV [default: stdin]
     #      -c --csv             write output to stdout in CSV format (instead of default RDS file)
     #      -v --verbose         be verbose
+
+## History
+
+#### v0.1.0 2020-04-20
+
+  - Initial release
+
+#### v0.1.1 2020-04-21
+
+  - Switch to ‘Rscript’ for easier install for users
+  - rename ‘dplyr.sh’ to just ‘dplyr’
+
+#### v0.1.2 2020-04-21
+
+  - Support for joins e.g. `left_join`
 
 ## Installation
 
@@ -86,15 +106,17 @@ install.packages('docopt')   # CLI description language
 
 #### Clone this repo and put `dplyr` in your path
 
-You’ll then need to download the shell script from my github and put
-`dplyr` somewhere in your path.
+You’ll then need to download the shell script from this repository and
+put `dplyr` somewhere in your path.
 
     git clone https://github.com/coolbutuseless/dplyr-cli
     cp dplyr-cli/dplyr ./somewhere/in/your/search/path
 
 # Example data
 
-Put an example CSV file on the filesystem
+Put an example CSV file on the filesystem. Note: This CSV file is now
+included as `mtcars.csv` as part of this git repository, as is a second
+CSV file for demonstrating joins - `cyl.csv`
 
 ``` r
 write.csv(mtcars, "mtcars.csv", row.names = FALSE)
@@ -181,6 +203,50 @@ cat mtcars.csv | group_by cyl | summarise "mpg = mean(mpg)" | kable
     #  |   4| 26.66364|
     #  |   6| 19.74286|
     #  |   8| 15.10000|
+
+# Example 4 - joins
+
+Limitations:
+
+  - first argument after a join command must be an existing file (either
+    CSV or RDS)
+  - You can’t yet specify a `by` argument for a join, so there must be a
+    column in common to join by
+
+<!-- end list -->
+
+``` sh
+cat cyl.csv
+```
+
+    #  cyl,description
+    #  4,four
+    #  6,six
+
+``` sh
+cat mtcars.csv | dplyr inner_join cyl.csv | dplyr kable
+```
+
+    #  |  mpg| cyl|  disp|  hp| drat|    wt|  qsec| vs| am| gear| carb|description |
+    #  |----:|---:|-----:|---:|----:|-----:|-----:|--:|--:|----:|----:|:-----------|
+    #  | 21.0|   6| 160.0| 110| 3.90| 2.620| 16.46|  0|  1|    4|    4|six         |
+    #  | 21.0|   6| 160.0| 110| 3.90| 2.875| 17.02|  0|  1|    4|    4|six         |
+    #  | 22.8|   4| 108.0|  93| 3.85| 2.320| 18.61|  1|  1|    4|    1|four        |
+    #  | 21.4|   6| 258.0| 110| 3.08| 3.215| 19.44|  1|  0|    3|    1|six         |
+    #  | 18.1|   6| 225.0| 105| 2.76| 3.460| 20.22|  1|  0|    3|    1|six         |
+    #  | 24.4|   4| 146.7|  62| 3.69| 3.190| 20.00|  1|  0|    4|    2|four        |
+    #  | 22.8|   4| 140.8|  95| 3.92| 3.150| 22.90|  1|  0|    4|    2|four        |
+    #  | 19.2|   6| 167.6| 123| 3.92| 3.440| 18.30|  1|  0|    4|    4|six         |
+    #  | 17.8|   6| 167.6| 123| 3.92| 3.440| 18.90|  1|  0|    4|    4|six         |
+    #  | 32.4|   4|  78.7|  66| 4.08| 2.200| 19.47|  1|  1|    4|    1|four        |
+    #  | 30.4|   4|  75.7|  52| 4.93| 1.615| 18.52|  1|  1|    4|    2|four        |
+    #  | 33.9|   4|  71.1|  65| 4.22| 1.835| 19.90|  1|  1|    4|    1|four        |
+    #  | 21.5|   4| 120.1|  97| 3.70| 2.465| 20.01|  1|  0|    3|    1|four        |
+    #  | 27.3|   4|  79.0|  66| 4.08| 1.935| 18.90|  1|  1|    4|    1|four        |
+    #  | 26.0|   4| 120.3|  91| 4.43| 2.140| 16.70|  0|  1|    5|    2|four        |
+    #  | 30.4|   4|  95.1| 113| 3.77| 1.513| 16.90|  1|  1|    5|    2|four        |
+    #  | 19.7|   6| 145.0| 175| 3.62| 2.770| 15.50|  0|  1|    5|    6|six         |
+    #  | 21.4|   4| 121.0| 109| 4.11| 2.780| 18.60|  1|  1|    4|    2|four        |
 
 ## Security warning
 

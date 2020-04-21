@@ -13,6 +13,7 @@
 # History
 #   v0.1.0  2020-04-20 Initial release
 #   v0.1.1  2020-04-21 Switch to Rscript executable
+#   v0.1.2  2020-04-21 Support for joins
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 suppressMessages({
@@ -44,6 +45,23 @@ opt <- docopt(doc)
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Helper function to reading data from a file based upon its extension
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+read_data <- function(input) {
+    if (!file.exists(input)) {
+        stop("[input]: not found: ", input)
+    }
+    ext <- tolower(tools::file_ext(input))
+    switch(
+        ext,
+        csv = readr::read_csv(input, col_types = readr::cols()),
+        rds = readRDS(input),
+        stop("Unknown file extension: ", ext)
+    )
+}
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # What did the user pass in to stdin?
 # Two cases handled:
 #   - if stdin is only a single element, assume it's a filename
@@ -57,27 +75,13 @@ input <- readLines(opt$file)
 
 if (length(input) == 1) {
     input <- trimws(input)
-    if (file.exists(input)) {
-        if (opt$verbose) message("[input] looks like an existing file: ", input)
-        ext <- tolower(tools::file_ext(input))
-        .data <- switch(
-            ext,
-            csv = readr::read_csv(input),
-            rds = readRDS(input),
-            stop("Unknown file extension: ", ext)
-        )
-    } else {
-        stop("[input]: not found: ", input)
-    }
+    if (opt$verbose) message("[input] looks like an existing file: ", input)
+    .data <- read_data(input)
 } else {
     if (opt$verbose) message("[input] reading CSV from stdin")
-    .data <- readr::read_csv(input)
+    .data <- readr::read_csv(input, col_types = readr::cols())
 }
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Collapse the code string
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-code <- paste(opt$code, collapse=" ")
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Run the command + code
@@ -88,7 +92,19 @@ code <- paste(opt$code, collapse=" ")
 if (opt$command %in% c('csv', 'kable')) {
     opt$csv <- TRUE
     res <- .data
+} else if (opt$command %in% c('left_join', 'right_join', 'full_join', 'anti_join', 'semi_join', 'inner_join')) {
+    rhs_filename <- opt$code[1]
+    .rhs <- read_data(rhs_filename)
+    code <- paste(opt$code[-1], collapse=" ")
+    command <- sprintf("dplyr::%s(.data, .rhs, %s)", opt$command, code)
+    if (opt$verbose) message("command: ", command)
+
+    # Avoid printing stuff about the join "by"
+    suppressMessages({
+        res <- eval(parse(text = command))
+    })
 } else {
+    code <- paste(opt$code, collapse="")
     command <- sprintf("dplyr::%s(.data, %s)", opt$command, code)
     if (opt$verbose) message("command: ", command)
 
