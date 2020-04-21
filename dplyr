@@ -1,10 +1,10 @@
-#!/usr/bin/env lr
+#!/usr/bin/env Rscript
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-#  dplyr - cli    [mikefc@coolbutuseless.com]
+#  dplyr-cli    [mikefc@coolbutuseless.com]
 #
-# Run chains of dplyr commands in the terminal (using {littler})
+# Run chains of dplyr commands in the terminal
 #
 # * run any dplyr command of the form "dplyr::verb(.data, code)"
 # * can set input file to be a CSV or RDS file
@@ -12,6 +12,7 @@
 #
 # History
 #   v0.1.0  2020-04-20 Initial release
+#   v0.1.1  2020-04-21 Switch to Rscript executable
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 suppressMessages({
@@ -27,8 +28,8 @@ suppressMessages({
 doc <- "dplyr-cli
 
 Usage:
-    dplyr.sh <command> [--file=fn] [--csv | -c] [--verbose | -v] [<code>...]
-    dplyr.sh -h | --help
+    dplyr <command> [--file=fn] [--csv | -c] [--verbose | -v] [<code>...]
+    dplyr -h | --help
 
 Options:
     -h --help            show this help text
@@ -88,7 +89,7 @@ if (opt$command %in% c('csv', 'kable')) {
     opt$csv <- TRUE
     res <- .data
 } else {
-    command <- glue::glue("dplyr::{opt$command}(.data, {code})")
+    command <- sprintf("dplyr::%s(.data, %s)", opt$command, code)
     if (opt$verbose) message("command: ", command)
 
     res <- eval(parse(text = command))
@@ -109,7 +110,9 @@ if (opt$command == 'kable') {
     if (opt$verbose) message(">>>> output CSV to stdout")
     write.csv(res, row.names = FALSE)
 } else {
-    tmp <- tempfile(fileext = ".rds")
+    # Explicitly setting a known tempdir. Otherwise 'tempdir()'
+    # directory is destroyed at end of each session
+    tmp <- tempfile(tmpdir = Sys.getenv('TMPDIR'), fileext = ".rds")
     saveRDS(res, tmp)
     if (opt$verbose) message(">>>> output to RDS", tmp)
     cat(tmp, "\n")
