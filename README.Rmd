@@ -214,3 +214,4 @@ program to the internet or random users under any circumstances.
 * [xsv](https://github.com/BurntSushi/xsv) - a fast CSV command line toolkit 
   written in Rust
 * [jq](https://stedolan.github.io/jq/) - a command line JSON processor.
+* [miller](http://johnkerl.org/miller/doc/)

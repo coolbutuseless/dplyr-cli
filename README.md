@@ -259,3 +259,4 @@ this program to the internet or random users under any circumstances.
     toolkit written in Rust
   - [jq](https://stedolan.github.io/jq/) - a command line JSON
     processor.
+  - [miller](http://johnkerl.org/miller/doc/)
