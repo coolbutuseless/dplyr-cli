@@ -67,6 +67,15 @@ Currently two extra commands are supported which are not part of `dplyr`.
 
 ## Installation
 
+Because this script straddles a great divide between R and the shell, you need 
+to ensure both are set up correctly for this to work.
+
+1. Install R packages
+2. Ensure littler command line executable is in your path (`lr` on OSX, `r` on everything else)
+3. Clone this repo and put `dplyr.sh` in your path
+
+
+#### Install R packages
 `dplyr-cli` is run from the shell but at every invocation is starting a new 
 rsession where the following packages are expected to be installed:
 
@@ -78,15 +87,44 @@ install.packages('dplyr')    # data manipulation
 install.packages('docopt')   # CLI description language
 ```
 
+
+#### Ensure littler command line executable is in your path.
+
+**Note:** For OSX systems, you will want to use lowercase `lr` as your command
+due to case sensitivity issues.
+
+**Note:** For unix-ish systems, you may want to use the lower case `r` command 
+from littler, in which case you should edit the first line of `dplyr.sh`
+to read `#!/usr/bin/env r`
+
+1. Ask `littler` where the executable is.
+2. Use whatever means necessary to copy it into your path
+
+
+```{r}
+littler::r()
+```
+
+```
+# Copy littler 'r' or 'lr' to somewhere in your path
+cp /Library/Frameworks/R.framework/Versions/3.6/Resources/library/littler/bin/r /somewhere/in/your/search/path/lr
+```
+
+#### Clone this repo and put `dplyr.sh` in your path
+
+
 You'll then need to download the shell script from my github and put `dplyr.sh`
 somewhere in your path.
 
 ```
 git clone https://github.com/coolbutuseless/dplyr-cli
+cp dplyr-cli/dplyr.sh ./somewhere/in/your/search/path
 ```
 
 
 # Example data
+
+Put an example CSV file on the filesystem
 
 ```{r}
 write.csv(mtcars, "mtcars.csv", row.names = FALSE)
