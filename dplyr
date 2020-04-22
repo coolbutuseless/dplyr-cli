@@ -148,7 +148,7 @@ if (opt$command == 'kable') {
     tmpdir <- c(Sys.getenv(c('TMPDIR', 'TMP', 'TEMP')), "/tmp/")
     tmpdir <- tmpdir[tmpdir != '']
     tmpdir <- tmpdir[1]
-    tmp <- tempfile(tmpdir = tmpdir, fileext = ".rds")
+    tmp <- tempfile(pattern = "dplyr-cli-", tmpdir = tmpdir, fileext = ".rds")
     saveRDS(res, tmp)
     if (opt$verbose) message(">>>> output to RDS", tmp)
     cat(tmp, "\n")

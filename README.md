@@ -24,7 +24,7 @@ pipe (`%>%`) to run sequences of commands.
 ## Motivation
 
 I wanted to be able to do quick hacks on CSV files on the command line
-without actually starting a proper R session.
+using dplyr syntax, but without actually starting a proper R session.
 
 ## What dplyr commands are supported?
 
@@ -44,11 +44,10 @@ Currently two extra commands are supported which are not part of
 ## Limitations
 
   - Only tested under ‘bash’ on OSX. YMMV.
-  - For `zsh` it appears you should escape much more, including `=`
+  - Every command runs in a separate R session.
   - When using special shell characters such as `()`, you’ll have to
-    quote your code arguments.  
-  - Every command runs in a separate R session - startup overhead can
-    get prohibitive.
+    quote your code arguments. Some shells will require more quoting
+    than others.
   - “joins” (such as `left_join`) do not currently let you specify the
     `by` argument, so there must be columns in common to both dataset
 
