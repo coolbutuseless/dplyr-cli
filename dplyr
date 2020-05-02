@@ -137,7 +137,7 @@ if (opt$command == 'kable') {
     cat(knitr::kable(.data), sep = "\n")
 } else if (opt$csv) {
     if (opt$verbose) message(">>>> output CSV to stdout")
-    write.csv(res, row.names = FALSE)
+    readr::write_csv(res)
 } else {
     # Explicitly set a known, unchanging tempdir.
     # A temporary directory created via 'tempdir()' is valid only for the
