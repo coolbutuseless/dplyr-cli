@@ -89,6 +89,10 @@ dplyr --help
 * More robust tmpdir handling
 
 
+## Contributors
+
+* [aborusso](https://github.com/aborruso) - documentation
+
 
 ## Installation
 
@@ -99,7 +103,7 @@ to ensure both are set up correctly for this to work.
 2. Clone this repo and put `dplyr` in your path
 
 
-#### Install R packages
+#### Install R packages - within R
 `dplyr-cli` is run from the shell but at every invocation is starting a new 
 rsession where the following packages are expected to be installed:
 
@@ -110,6 +114,18 @@ install.packages('dplyr')    # data manipulation
 install.packages('docopt')   # CLI description language
 ```
 
+<details>
+<summary> Click to reveal instructions for installing packages on the command line</summary>
+
+To do it from the cli on a linux-ish system, install `r-base` (`sudo apt -y install r-base`) and then run
+
+```bash
+sudo su - -c "R -e \"install.packages('readr', repos='http://cran.rstudio.com/')\""
+sudo su - -c "R -e \"install.packages('dplyr', repos='http://cran.rstudio.com/')\""
+sudo su - -c "R -e \"install.packages('docopt', repos='http://cran.rstudio.com/')\""
+```
+
+</details>
 
 
 #### Clone this repo and put `dplyr` in your path

@@ -88,6 +88,10 @@ dplyr --help
 
   - More robust tmpdir handling
 
+## Contributors
+
+  - [aborusso](https://github.com/aborruso) - documentation
+
 ## Installation
 
 Because this script straddles a great divide between R and the shell,
@@ -96,7 +100,7 @@ you need to ensure both are set up correctly for this to work.
 1.  Install R packages
 2.  Clone this repo and put `dplyr` in your path
 
-#### Install R packages
+#### Install R packages - within R
 
 `dplyr-cli` is run from the shell but at every invocation is starting a
 new rsession where the following packages are expected to be installed:
@@ -106,6 +110,22 @@ install.packages('readr')    # read in CSV data
 install.packages('dplyr')    # data manipulation
 install.packages('docopt')   # CLI description language
 ```
+
+<details>
+
+<summary> Click to reveal instructions for installing packages on the
+command line</summary>
+
+To do it from the cli on a linux-ish system, install `r-base` (`sudo apt
+-y install r-base`) and then run
+
+``` bash
+sudo su - -c "R -e \"install.packages('readr', repos='http://cran.rstudio.com/')\""
+sudo su - -c "R -e \"install.packages('dplyr', repos='http://cran.rstudio.com/')\""
+sudo su - -c "R -e \"install.packages('docopt', repos='http://cran.rstudio.com/')\""
+```
+
+</details>
 
 #### Clone this repo and put `dplyr` in your path
 
@@ -201,6 +221,7 @@ alias kable="dplyr kable"
 cat mtcars.csv | group_by cyl | summarise "mpg = mean(mpg)" | kable
 ```
 
+    #  `summarise()` ungrouping output (override with `.groups` argument)
     #  | cyl|      mpg|
     #  |---:|--------:|
     #  |   4| 26.66364|
