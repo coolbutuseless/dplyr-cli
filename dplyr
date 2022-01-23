@@ -15,6 +15,7 @@
 #   v0.1.1  2020-04-21 Switch to Rscript executable
 #   v0.1.2  2020-04-21 Support for joins
 #   v0.1.3  2020-04-22 More robust tmpdir handling
+#   v0.1.4  2022-01-23 Fix for newer read_csv handling
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 suppressMessages({
@@ -92,7 +93,7 @@ if (length(input) == 1) {
     .data <- read_data(input)
 } else {
     if (opt$verbose) message("[input] reading CSV from stdin")
-    .data <- readr::read_csv(input, col_types = readr::cols())
+    .data <- readr::read_csv(I(input), col_types = readr::cols())
 }
 
 

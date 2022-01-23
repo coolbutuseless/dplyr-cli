@@ -88,6 +88,10 @@ dplyr --help
 
 * More robust tmpdir handling
 
+#### v0.1.4 2022-01-23
+
+* Fix handling for latest `read_csv()`.  Fixes #9
+
 
 ## Contributors
 

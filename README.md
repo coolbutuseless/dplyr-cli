@@ -30,25 +30,25 @@ using dplyr syntax, but without actually starting a proper R session.
 
 Any command of the form:
 
-  - `dplyr::verb(.data, code)`
-  - `dplyr::*_join(.data, .rhs)`
+-   `dplyr::verb(.data, code)`
+-   `dplyr::*_join(.data, .rhs)`
 
 Currently two extra commands are supported which are not part of
 `dplyr`.
 
-  - `csv` performs no dplyr command, but only outputs the input data as
+-   `csv` performs no dplyr command, but only outputs the input data as
     CSV to stdout
-  - `kable` performs no dplyr command, but only outputs the input data
+-   `kable` performs no dplyr command, but only outputs the input data
     as a `knitr::kable()` formatted string to stdout
 
 ## Limitations
 
-  - Only tested under ‘bash’ on OSX. YMMV.
-  - Every command runs in a separate R session.
-  - When using special shell characters such as `()`, you’ll have to
+-   Only tested under ‘bash’ on OSX. YMMV.
+-   Every command runs in a separate R session.
+-   When using special shell characters such as `()`, you’ll have to
     quote your code arguments. Some shells will require more quoting
     than others.
-  - “joins” (such as `left_join`) do not currently let you specify the
+-   “joins” (such as `left_join`) do not currently let you specify the
     `by` argument, so there must be columns in common to both dataset
 
 ## Usage
@@ -73,24 +73,28 @@ dplyr --help
 
 #### v0.1.0 2020-04-20
 
-  - Initial release
+-   Initial release
 
 #### v0.1.1 2020-04-21
 
-  - Switch to ‘Rscript’ for easier install for users
-  - rename ‘dplyr.sh’ to just ‘dplyr’
+-   Switch to ‘Rscript’ for easier install for users
+-   rename ‘dplyr.sh’ to just ‘dplyr’
 
 #### v0.1.2 2020-04-21
 
-  - Support for joins e.g. `left_join`
+-   Support for joins e.g. `left_join`
 
 #### v0.1.3 2020-04-22
 
-  - More robust tmpdir handling
+-   More robust tmpdir handling
+
+#### v0.1.4 2022-01-23
+
+-   Fix handling for latest `read_csv()`. Fixes #9
 
 ## Contributors
 
-  - [aborusso](https://github.com/aborruso) - documentation
+-   [aborusso](https://github.com/aborruso) - documentation
 
 ## Installation
 
@@ -112,12 +116,12 @@ install.packages('docopt')   # CLI description language
 ```
 
 <details>
+<summary>
+Click to reveal instructions for installing packages on the command line
+</summary>
 
-<summary> Click to reveal instructions for installing packages on the
-command line</summary>
-
-To do it from the cli on a linux-ish system, install `r-base` (`sudo apt
--y install r-base`) and then run
+To do it from the cli on a linux-ish system, install `r-base`
+(`sudo apt -y install r-base`) and then run
 
 ``` bash
 sudo su - -c "R -e \"install.packages('readr', repos='http://cran.rstudio.com/')\""
@@ -221,7 +225,6 @@ alias kable="dplyr kable"
 cat mtcars.csv | group_by cyl | summarise "mpg = mean(mpg)" | kable
 ```
 
-    #  `summarise()` ungrouping output (override with `.groups` argument)
     #  | cyl|      mpg|
     #  |---:|--------:|
     #  |   4| 26.66364|
@@ -232,12 +235,10 @@ cat mtcars.csv | group_by cyl | summarise "mpg = mean(mpg)" | kable
 
 Limitations:
 
-  - first argument after a join command must be an existing file (either
+-   first argument after a join command must be an existing file (either
     CSV or RDS)
-  - You can’t yet specify a `by` argument for a join, so there must be a
+-   You can’t yet specify a `by` argument for a join, so there must be a
     column in common to join by
-
-<!-- end list -->
 
 ``` sh
 cat cyl.csv
@@ -279,8 +280,8 @@ this program to the internet or random users under any circumstances.
 
 ## Inspirations
 
-  - [xsv](https://github.com/BurntSushi/xsv) - a fast CSV command line
+-   [xsv](https://github.com/BurntSushi/xsv) - a fast CSV command line
     toolkit written in Rust
-  - [jq](https://stedolan.github.io/jq/) - a command line JSON
+-   [jq](https://stedolan.github.io/jq/) - a command line JSON
     processor.
-  - [miller](http://johnkerl.org/miller/doc/)
+-   [miller](http://johnkerl.org/miller/doc/)
