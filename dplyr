@@ -56,7 +56,7 @@ read_data <- function(input) {
     ext <- tolower(tools::file_ext(input))
     switch(
         ext,
-        csv = readr::read_csv(input, col_types = readr::cols()),
+        csv = readr::read_delim(input, col_types = readr::cols()),
         rds = readRDS(input),
         stop("Unknown file extension: ", ext)
     )
@@ -93,7 +93,7 @@ if (length(input) == 1) {
     .data <- read_data(input)
 } else {
     if (opt$verbose) message("[input] reading CSV from stdin")
-    .data <- readr::read_csv(I(input), col_types = readr::cols())
+    .data <- readr::read_delim(I(input), col_types = readr::cols())
 }
 
 
