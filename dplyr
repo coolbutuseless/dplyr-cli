@@ -23,7 +23,7 @@ suppressMessages({
     library(dplyr)
 })
 
-
+stopifnot(utils::packageVersion("readr") >= "2.0.0")
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # configuration for docopt
